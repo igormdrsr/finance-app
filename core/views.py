@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import (
     ListView,
@@ -195,27 +195,28 @@ class BudgetStreakAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, category_id):
-        try:
-            category = Category.objects.get(id=category_id, user=request.user)
-            budget_amount = category.budgets.get(active=True).amount
-            current_streak = 0
+        category = get_object_or_404(Category, id=category_id, user=request.user)
+        budget = get_object_or_404(Budget, category=category, active=True)
 
-            data = (
-                category.transactions.filter(transaction_type="expense")
-                .annotate(month=TruncMonth("date"))
-                .values("month")
-                .annotate(amount=Sum("amount"))
-                .order_by("month")
-            )
+        current_streak = 0
 
-            for obj in data:
-                if obj["amount"] <= budget_amount:
-                    current_streak += 1
-                else:
-                    current_streak = 0
+        monthly_expenses = (
+            category.transactions.filter(transaction_type="expense")
+            .annotate(month=TruncMonth("date"))
+            .values("month")
+            .annotate(amount=Sum("amount"))
+            .order_by("month")
+        )
 
-            data = {"category": category.name, "current_streak": current_streak}
-            return Response(data)
+        for expense in monthly_expenses:
+            if expense["amount"] <= budget.amount:
+                current_streak += 1
+            else:
+                current_streak = 0
 
-        except Category.DoesNotExist:
-            return Response({"error": "Categoria não encontrada."}, status=404)
+        data = {
+            "category": category.name,
+            "budget": budget.amount,
+            "current_streak": current_streak,
+        }
+        return Response(data)

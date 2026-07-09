@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 class Category(models.Model):
@@ -62,6 +63,16 @@ class Budget(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["category"],
+                condition=Q(active=True),
+                name="unique_active_budget_per_category",
+            )
+        ]
+
 
 # from core.models import Category, Transaction, Goal, Budget
 # c1 = Category.objects.get(name="Lazer")
