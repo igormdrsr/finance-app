@@ -1,0 +1,54 @@
+[
+  {"model":"core.category","pk":1,"fields":{"name":"Alimentação","user":1}},
+  {"model":"core.category","pk":2,"fields":{"name":"Transporte","user":1}},
+  {"model":"core.category","pk":3,"fields":{"name":"Moradia","user":1}},
+  {"model":"core.category","pk":4,"fields":{"name":"Saúde","user":1}},
+  {"model":"core.category","pk":5,"fields":{"name":"Educação","user":1}},
+  {"model":"core.category","pk":6,"fields":{"name":"Lazer","user":1}},
+  {"model":"core.category","pk":7,"fields":{"name":"Compras","user":1}},
+  {"model":"core.category","pk":8,"fields":{"name":"Investimentos","user":1}},
+  {"model":"core.category","pk":9,"fields":{"name":"Salário","user":1}},
+  {"model":"core.category","pk":10,"fields":{"name":"Outros","user":1}},
+
+  {"model":"core.transaction","pk":1,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Janeiro","date":"2025-01-05","created_at":"2025-01-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":2,"fields":{"user":1,"amount":"850.00","transaction_type":"expense","description":"Aluguel","date":"2025-01-10","created_at":"2025-01-10T09:00:00Z","category":3}},
+  {"model":"core.transaction","pk":3,"fields":{"user":1,"amount":"180.00","transaction_type":"expense","description":"Mercado","date":"2025-01-15","created_at":"2025-01-15T18:30:00Z","category":1}},
+
+  {"model":"core.transaction","pk":4,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Fevereiro","date":"2025-02-05","created_at":"2025-02-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":5,"fields":{"user":1,"amount":"75.00","transaction_type":"expense","description":"Restaurante","date":"2025-02-11","created_at":"2025-02-12T12:00:00Z","category":1}},
+  {"model":"core.transaction","pk":6,"fields":{"user":1,"amount":"120.00","transaction_type":"expense","description":"Consulta Médica","date":"2025-02-20","created_at":"2025-02-20T15:00:00Z","category":4}},
+
+  {"model":"core.transaction","pk":7,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Março","date":"2025-03-05","created_at":"2025-03-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":8,"fields":{"user":1,"amount":"220.00","transaction_type":"expense","description":"Mercado","date":"2025-03-08","created_at":"2025-03-08T18:00:00Z","category":1}},
+  {"model":"core.transaction","pk":9,"fields":{"user":1,"amount":"90.00","transaction_type":"expense","description":"Cinema e Lanche","date":"2025-03-22","created_at":"2025-03-22T22:00:00Z","category":6}},
+
+  {"model":"core.transaction","pk":10,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Abril","date":"2025-04-05","created_at":"2025-04-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":11,"fields":{"user":1,"amount":"450.00","transaction_type":"income","description":"Freelance React","date":"2025-04-18","created_at":"2025-04-18T20:00:00Z","category":10}},
+
+  {"model":"core.transaction","pk":12,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Maio","date":"2025-05-05","created_at":"2025-05-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":13,"fields":{"user":1,"amount":"500.00","transaction_type":"expense","description":"Investimento Tesouro Direto","date":"2025-05-10","created_at":"2025-05-10T10:00:00Z","category":8}},
+  {"model":"core.transaction","pk":14,"fields":{"user":1,"amount":"150.00","transaction_type":"expense","description":"Roupas","date":"2025-05-28","created_at":"2025-05-29T09:30:00Z","category":7}},
+
+  {"model":"core.transaction","pk":15,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Junho","date":"2025-06-05","created_at":"2025-06-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":16,"fields":{"user":1,"amount":"65.00","transaction_type":"expense","description":"Uber","date":"2025-06-17","created_at":"2025-06-17T18:30:00Z","category":2}},
+
+  {"model":"core.transaction","pk":17,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Julho","date":"2025-07-05","created_at":"2025-07-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":18,"fields":{"user":1,"amount":"200.00","transaction_type":"expense","description":"Curso Django","date":"2025-07-15","created_at":"2025-07-15T21:00:00Z","category":5}},
+  {"model":"core.transaction","pk":19,"fields":{"user":1,"amount":"300.00","transaction_type":"income","description":"Venda de Equipamento","date":"2025-07-25","created_at":"2025-07-25T11:00:00Z","category":10}},
+
+  {"model":"core.transaction","pk":20,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Agosto","date":"2025-08-05","created_at":"2025-08-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":21,"fields":{"user":1,"amount":"250.00","transaction_type":"expense","description":"Supermercado","date":"2025-08-12","created_at":"2025-08-12T19:00:00Z","category":1}},
+
+  {"model":"core.transaction","pk":22,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Setembro","date":"2025-09-05","created_at":"2025-09-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":23,"fields":{"user":1,"amount":"90.00","transaction_type":"expense","description":"Combustível","date":"2025-09-18","created_at":"2025-09-18T17:00:00Z","category":2}},
+
+  {"model":"core.transaction","pk":24,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Outubro","date":"2025-10-05","created_at":"2025-10-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":25,"fields":{"user":1,"amount":"400.00","transaction_type":"income","description":"Freelance Landing Page","date":"2025-10-21","created_at":"2025-10-21T22:00:00Z","category":10}},
+
+  {"model":"core.transaction","pk":26,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Novembro","date":"2025-11-05","created_at":"2025-11-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":27,"fields":{"user":1,"amount":"1200.00","transaction_type":"expense","description":"Notebook","date":"2025-11-20","created_at":"2025-11-20T15:00:00Z","category":7}},
+
+  {"model":"core.transaction","pk":28,"fields":{"user":1,"amount":"3500.00","transaction_type":"income","description":"Salário Dezembro","date":"2025-12-05","created_at":"2025-12-05T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":29,"fields":{"user":1,"amount":"1000.00","transaction_type":"income","description":"Décimo Terceiro","date":"2025-12-15","created_at":"2025-12-15T08:00:00Z","category":9}},
+  {"model":"core.transaction","pk":30,"fields":{"user":1,"amount":"350.00","transaction_type":"expense","description":"Presentes de Natal","date":"2025-12-23","created_at":"2025-12-23T20:00:00Z","category":7}}
+]
