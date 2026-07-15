@@ -184,7 +184,7 @@ class BudgetListAPIView(APIView):
     def get(self, request):
         budgets = Budget.objects.filter(user=request.user, active=True).order_by(
             "-created_at"
-        )
+        ).select_related("category")
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(budgets, request)
         serializer = BudgetSerializer(result_page, many=True)
