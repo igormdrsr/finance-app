@@ -113,7 +113,7 @@ class DashboardAPIView(APIView):
             transaction_type="income", date__year=year, date__month=month
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
 
-        monthly_transactions = transactions.filter(date__year=year, date__month=month)
+        monthly_transactions = transactions.filter(date__year=year, date__month=month).select_related("category", "goal")
 
         monthly_transactions_items = TransactionSerializer(
             monthly_transactions, many=True
@@ -152,16 +152,6 @@ class ExpenseByCategoryAPIView(APIView):
         return paginator.get_paginated_response(result_page)
 
 
-# isso, só que em sequência
-# exemplo: a meta é 1000 reais em alimentação
-# - dezembro: 900
-# - janeiro: 1400
-# - fevereiro: 950
-# - março: 700
-# - abril: 800
-
-# nesse caso, ele está a 3 meses em sequência batendo a meta, já que janeiro resetou a sequência por estar acima do limite
-
 # TODO: Filtros e Pesquisas
 # Objetivo
 # Facilitar a consulta das movimentações.
@@ -182,9 +172,11 @@ class BudgetListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        budgets = Budget.objects.filter(user=request.user, active=True).order_by(
-            "-created_at"
-        ).select_related("category")
+        budgets = (
+            Budget.objects.filter(user=request.user, active=True)
+            .order_by("-created_at")
+            .select_related("category")
+        )
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(budgets, request)
         serializer = BudgetSerializer(result_page, many=True)
