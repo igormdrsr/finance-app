@@ -26,7 +26,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "user", "name"]
-        read_only_fields = ["id"]
+        read_only_fields = ["id", "user"]
 
 
 class GoalSerializer(serializers.ModelSerializer):

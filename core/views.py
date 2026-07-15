@@ -39,7 +39,7 @@ class CategoryListCreate(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        categories = Category.objects.filter(user=request.user)
+        categories = Category.objects.filter(user=request.user).order_by("name")
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(categories, request)
         serializer = CategorySerializer(result_page, many=True)
@@ -49,7 +49,7 @@ class CategoryListCreate(APIView):
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
