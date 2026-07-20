@@ -325,3 +325,63 @@ class DashboardTestCase(APITestCase):
         self.assertEqual(
             Decimal(monthly_transactions_items[0]["amount"]), Decimal("200.00")
         )
+
+
+class TransactionListTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="igor", password="1234-abc")
+
+    def test_should_require_authentication(self):
+        url = reverse("transactions")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_should_return_all_transactions(self):
+        self.client.force_authenticate(self.user)
+        url = reverse("transactions")
+
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type="income",
+            amount=Decimal("1000.00"),
+            description="Salário",
+            date=date(2024, 1, 5),
+        )
+
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type="expense",
+            amount=Decimal("200.00"),
+            description="Aluguel",
+            date=date(2024, 1, 10),
+        )
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_should_filter_current_month(self):
+        self.client.force_authenticate(self.user)
+        url = reverse("transactions")
+
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type="income",
+            amount=Decimal("1000.00"),
+            description="Salário",
+            date=date(2024, 1, 5),
+        )
+
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type="expense",
+            amount=Decimal("200.00"),
+            description="Aluguel",
+            date=date(2024, 2, 10),
+        )
+
+        response = self.client.get(url, {"month": 1, "year": 2024})
+        breakpoint()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)

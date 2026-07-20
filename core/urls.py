@@ -9,6 +9,7 @@ urlpatterns = [
     path("goals/", views.GoalListAPIView.as_view(), name="goals-list"),
     path("expenses-by-category/", views.ExpenseByCategoryAPIView.as_view(), name="expenses-by-category"),
     path("category/<int:category_id>/statistics/", views.BudgetStreakAPIView.as_view(), name="budget-streak"),
+    path("transactions/", views.TransactionList.as_view(), name="transactions")
 ]
 
 # GET /budgets/5/statistics/

@@ -9,6 +9,7 @@ from django.views.generic import (
 )
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Value
 from django.db.models.functions import Coalesce, TruncMonth
+from django.utils.dateparse import parse_date
 from datetime import date
 
 from rest_framework.views import APIView
@@ -24,9 +25,10 @@ from core.serializers import (
     CategorySerializer,
     GoalSerializer,
     BudgetSerializer,
-    BudgetStreakSerializer,
 )
+
 from decimal import Decimal
+from dateutil.relativedelta import relativedelta
 
 
 class HomeView(View):
@@ -93,10 +95,10 @@ class DashboardAPIView(APIView):
     def get(self, request):
         today = date.today()
 
+        transactions = Transaction.objects.filter(user=request.user)
+
         month = int(request.query_params.get("month", today.month))
         year = int(request.query_params.get("year", today.year))
-
-        transactions = Transaction.objects.filter(user=request.user)
 
         total_income = transactions.filter(transaction_type="income").aggregate(
             total=Sum("amount")
@@ -113,7 +115,9 @@ class DashboardAPIView(APIView):
             transaction_type="income", date__year=year, date__month=month
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
 
-        monthly_transactions = transactions.filter(date__year=year, date__month=month).select_related("category", "goal")
+        monthly_transactions = transactions.filter(
+            date__year=year, date__month=month
+        ).select_related("category", "goal")
 
         monthly_transactions_items = TransactionSerializer(
             monthly_transactions, many=True
@@ -152,20 +156,122 @@ class ExpenseByCategoryAPIView(APIView):
         return paginator.get_paginated_response(result_page)
 
 
-# TODO: Filtros e Pesquisas
-# Objetivo
-# Facilitar a consulta das movimentações.
+class TransactionList(APIView):
+    permission_classes = [IsAuthenticated]
 
-# Filtros
-# Período personalizado
-# Mês atual
-# Últimos 3 meses
-# Últimos 6 meses
-# Ano atual
-# Categoria
-# Tipo de transação
+    def get(self, request):
+        today = date.today()
+        transactions = (
+            Transaction.objects.filter(user=request.user)
+            .select_related("category", "goal")
+            .order_by("-date")
+        )
 
-# Observação: Somente um filtro deve ser aplicado por vez.
+        period = request.query_params.get("period")
+
+        valid_period = {
+            "current_month",
+            "last_3_months",
+            "last_6_months",
+            "current_year",
+            "custom",
+        }
+
+        if period is not None:
+            period = period.strip()
+
+            # ?period= pode retornar uma string vazia e eu optei por tratar isso como inválido.
+            if not period:
+                return Response(
+                    {"detail": "Period cannot be empty."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if period not in valid_period:
+                return Response(
+                    {"detail": "Invalid filter."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if period == "current_month":
+                transactions = transactions.filter(
+                    date__year=today.year, date__month=today.month
+                )
+
+            elif period == "last_3_months":
+                transactions = transactions.filter(
+                    date__gte=today - relativedelta(months=3)
+                )
+
+            elif period == "last_6_months":
+                transactions = transactions.filter(
+                    date__gte=today - relativedelta(months=6)
+                )
+
+            elif period == "current_year":
+                transactions = transactions.filter(date__year=today.year)
+
+            elif period == "custom":
+                start_date = request.query_params.get("start_date")
+                end_date = request.query_params.get("end_date")
+
+                if not start_date or not end_date:
+                    return Response(
+                        {"detail": "start_date and end_date are required."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                start_date = parse_date(start_date)
+                end_date = parse_date(end_date)
+                if start_date is None or end_date is None:
+                    return Response(
+                        {
+                            "detail": "start_date and end_date must be in YYYY-MM-DD format."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                if start_date > end_date:
+                    return Response(
+                        {
+                            "detail": "start_date must be less than or equal to end_date."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                transactions = transactions.filter(date__range=[start_date, end_date])
+
+        category_id = request.query_params.get("category_id")
+        if category_id is not None:
+            category_id = category_id.strip()
+
+            if not category_id:
+                return Response(
+                    {"detail": "Category ID cannot be empty."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            transactions = transactions.filter(category_id=category_id)
+
+        transaction_type = request.query_params.get("transaction_type")
+        if transaction_type is not None:
+            transaction_type = transaction_type.strip()
+            if not transaction_type:
+                return Response(
+                    {"detail": "transaction_type cannot be empty."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            valid_types = dict(Transaction.TRANSACTION_TYPES).keys()
+
+            if transaction_type not in valid_types:
+                return Response(
+                    {"detail": "transaction_type must be 'income' or 'expense'."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            transactions = transactions.filter(transaction_type=transaction_type)
+
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
 
 
 class BudgetListAPIView(APIView):
